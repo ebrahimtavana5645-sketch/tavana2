@@ -1,0 +1,80 @@
+name: Build APK and EXE
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Prepare Capacitor project
+        working-directory: build-kits/android
+        run: |
+          npm install
+          npm run prepare-web
+          npx cap add android
+          node apply-icons.js
+          npx cap sync android
+
+      - name: Build debug APK
+        working-directory: build-kits/android/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: owqat-apk
+          path: build-kits/android/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
+
+  windows:
+    name: Build Windows EXE
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build installer and portable EXE
+        working-directory: build-kits/windows
+        run: |
+          npm install
+          npm run dist
+
+      - name: Upload EXE files
+        uses: actions/upload-artifact@v4
+        with:
+          name: owqat-exe
+          path: build-kits/windows/dist/*.exe
+          if-no-files-found: error
+          retention-days: 14
