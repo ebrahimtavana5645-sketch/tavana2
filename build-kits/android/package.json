@@ -1,0 +1,16 @@
+{
+  "name": "owqat-android",
+  "version": "4.12.6",
+  "private": true,
+  "scripts": {
+    "prepare-web": "node prepare-web.js",
+    "add": "npx cap add android",
+    "sync": "npm run prepare-web && npx cap sync android",
+    "open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}

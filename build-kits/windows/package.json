@@ -1,0 +1,39 @@
+{
+  "name": "owqat-windows",
+  "productName": "اوقات شرعی",
+  "version": "4.12.6",
+  "main": "main.js",
+  "description": "اوقات شرعی نمازهای پنجگانه",
+  "scripts": {
+    "start": "electron .",
+    "dist": "node prepare-app.js && electron-builder --win portable nsis"
+  },
+  "build": {
+    "appId": "ir.owqat.prayertimes",
+    "productName": "Owqat",
+    "files": [
+      "main.js",
+      "app/**/*"
+    ],
+    "win": {
+      "icon": "icon.ico",
+      "target": [
+        "portable",
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "اوقات شرعی",
+      "artifactName": "Owqat-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Owqat-Portable-${version}.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  }
+}
